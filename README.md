@@ -51,6 +51,4 @@ $ sudo apt update && sudo apt install bazel
 
 ## チュートリアル (C++)
 
-- [Bazel Tutorial: Build a C++ Project](https://bazel.build/start/cpp)
-
-https://tanishiking24.hatenablog.com/entry/2022/12/14/155923
+[Bazel Tutorial: Build a C++ Project](https://bazel.build/start/cpp)
