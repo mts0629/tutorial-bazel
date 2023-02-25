@@ -11,22 +11,22 @@ cpp
     └─ WORKSPACE
 ```
 
+ひとつのコマンドライン引数を文字列として取得し、
+
+- 文字列 `"Hello （引数）"` （デフォルト引数は`"world"`）
+- 実行時のローカル時間文字列
+
+を出力するプログラムを作成する。
+
 ## パッケージ
 
 ### main
 
-ひとつのコマンドライン引数を文字列として取得し、
-
-- 文字列`"Hello （引数）"` （デフォルト引数は`"world"`）
-- 実行時のローカル時間文字列
-
-を出力するプログラム。
-
 - hello-world.cpp
 
-  main のほか2つの関数からなる。
+  エントリポイント `main` のほか2つの関数からなる。
 
-  - `get_greet()`: 文字列引数（参照）を取得し、文字列`"Hello （引数）"` を返す。
+  - `get_greet()`: 文字列引数（参照）を取得し、文字列 `"Hello （引数）"` を返す。
   - `print_localtime()`: 実行時のローカル時間文字列を標準出力に出力する。
 
   ```cpp
@@ -60,7 +60,7 @@ cpp
 
 - BUILD
 
-  実行バイナリ`hello-world` の生成ルールを記述する。
+  実行バイナリ `hello-world` の生成ルールを記述する。
 
   - ビルドルールは [Starlark](https://github.com/bazelbuild/starlark) というDSLで記述される。
   - `load` で定義済みのC/C++ルールを読み込む。
@@ -84,7 +84,7 @@ cpp
 
 `bazel build <label>` でビルドを実行する。
 
-パッケージ `main`のターゲット`hello-world` をビルドするため、ラベル名は `//main:hello-world` となる。
+パッケージ `main` のターゲット `hello-world` をビルドするため、指定するラベルは `//main:hello-world` となる。
 
 ```sh
 $ cd cpp/stage1
@@ -99,16 +99,14 @@ INFO: 6 processes: 4 internal, 2 linux-sandbox.
 INFO: Build completed successfully, 6 total actions
 ```
 
-ビルド成果物が`bazel-***` ディレクトリに生成される。
-
-```sh
-$ ls
-WORKSPACE  bazel-bin  bazel-out  bazel-stage1  bazel-testlogs  main
-```
+ビルド成果物が `bazel-***` ディレクトリに生成される。
 
 実際はシンボリックリンクで、ホームディレクトリ以下にキャッシュが保持されている。
 
 ```sh
+$ ls
+WORKSPACE  bazel-bin  bazel-out  bazel-stage1  bazel-testlogs  main
+
 $ ls -al
 *** Feb 22 02:40 .
 *** Feb 22 02:52 ..
@@ -123,7 +121,7 @@ $ ls -al
 
 ## 実行
 
-`bazel-bin`以下に実行バイナリが生成される。
+`bazel-bin` 以下に実行バイナリが生成される。
 
 ```sh
 $ ./bazel-bin/main/hello-world
@@ -167,7 +165,7 @@ Wed Feb 22 02:31:58 2023
 
 ## Dependency graph
 
-依存関係をGraphVizのDOT言語で出力し、可視化が可能。
+ターゲットの依存関係グラフをDOT言語で出力し、可視化が可能。
 
 ```sh
 $ sudo apt update && sudo apt install graphviz

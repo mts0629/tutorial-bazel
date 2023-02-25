@@ -19,15 +19,15 @@ cpp
 
 ![hello-world.png](hello-world.png)
 
+プログラムはstage1と同一。
+
 ## パッケージ
 
 ### main
 
-プログラムはstage1と同一。
-
 - hello-world.cpp
 
-  関数 `get_greet()`、`print_localtime()` を別モジュールから呼び出す。
+  関数 `get_greet()` 、`print_localtime()` を別モジュールから呼び出す。
 
   ```cpp
   #include <string>
@@ -53,7 +53,7 @@ cpp
 - hello-greet.hpp
 - hello-greet.cpp
 
-  stage2 と同一。
+  stage2と同一。
 
 - BUILD
 
@@ -81,7 +81,7 @@ cpp
 
 ### lib
 
-関数 `print_localtime()` を含むモジュールをパッケージ`lib` としてまとめる。
+関数 `print_localtime()` を含むモジュールをパッケージ `lib` としてまとめる。
 
 - hello-time.hpp
 
@@ -111,11 +111,11 @@ cpp
 
   ターゲット `hello-time` を他のパッケージから参照できるように、可視化属性 `visibility` を設定する。
 
-  - `"//visibility:public"`: すべてのパッケージへのアクセスを許可する。
-  - `"//visibility:private"`: 追加のアクセス権を付与しない。パッケージ内部のみから参照できる。
-    - `visibility` および `default_visibility` の設定がない場合、デフォルトの設定値として適用される。
-  - `"//foo/bar:__pkg__"`: `//foo/bar` へのアクセス権を付与する。
-  - `"//foo/bar:__subpackages__"`: `//foo/bar` およびそのサブパッケージへのアクセス権を付与する。
+  - `"//visibility:public"` : すべてのパッケージへのアクセスを許可する。
+  - `"//visibility:private"` : 追加のアクセス権を付与しない。パッケージ内部のみから参照できる。
+    - 指定がない場合のデフォルト値。
+  - `"//foo/bar:__pkg__"` : `//foo/bar` へのアクセス権を付与する。
+  - `"//foo/bar:__subpackages__"` : `//foo/bar` およびそのサブパッケージへのアクセス権を付与する。
 
   ```bazel
   # Package "lib"
