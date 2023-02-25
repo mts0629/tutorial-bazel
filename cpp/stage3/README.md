@@ -17,6 +17,119 @@ cpp
     └─ WORKSPACE
 ```
 
+![hello-world.png](hello-world.png)
+
+## パッケージ
+
+### main
+
+プログラムはstage1と同一。
+
+- hello-world.cpp
+
+  関数 `get_greet()`、`print_localtime()` を別モジュールから呼び出す。
+
+  ```cpp
+  #include <string>
+  #include <iostream>
+
+  #include "lib/hello-time.hpp"
+  #include "hello-greet.hpp"
+
+  int main(int argc, char** argv) {
+      std::string who = "world";
+      if (argc > 1) {
+          who = argv[1];
+      }
+
+      std::cout << get_greet(who) << std::endl;
+
+      print_localtime();
+
+      return 0;
+  }
+  ```
+
+- hello-greet.hpp
+- hello-greet.cpp
+
+  stage2 と同一。
+
+- BUILD
+
+  パッケージ `lib` 内のライブラリへの依存関係を `dep` に追加する。
+
+  ```bazel
+  load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+  cc_library(
+      name = "hello-greet",
+      srcs = ["hello-greet.cpp"],
+      hdrs = ["hello-greet.hpp"],
+  )
+
+  cc_binary(
+      name = "hello-world",
+      srcs = ["hello-world.cpp"],
+      deps = [
+          "//main:hello-greet",
+          # Dependent package
+          "//lib:hello-time",
+      ],
+  )
+  ```
+
+### lib
+
+関数 `print_localtime()` を含むモジュールをパッケージ`lib` としてまとめる。
+
+- hello-time.hpp
+
+  ```cpp
+  #ifndef LIB_HELLO_TIME_HPP
+  #define LIB_HELLO_TIME_HPP
+
+  void print_localtime();
+
+  #endif // LIB_HELLO_TIME_HPP
+  ```
+
+- hello-time.cpp
+
+  ```cpp
+  #include "lib/hello-time.hpp"
+  #include <ctime>
+  #include <iostream>
+
+  void print_localtime() {
+      std::time_t result = std::time(nullptr);
+      std::cout << std::asctime(std::localtime(&result));
+  }
+  ```
+
+- BUILD
+
+  ターゲット `hello-time` を他のパッケージから参照できるように、可視化属性 `visibility` を設定する。
+
+  - `"//visibility:public"`: すべてのパッケージへのアクセスを許可する。
+  - `"//visibility:private"`: 追加のアクセス権を付与しない。パッケージ内部のみから参照できる。
+    - `visibility` および `default_visibility` の設定がない場合、デフォルトの設定値として適用される。
+  - `"//foo/bar:__pkg__"`: `//foo/bar` へのアクセス権を付与する。
+  - `"//foo/bar:__subpackages__"`: `//foo/bar` およびそのサブパッケージへのアクセス権を付与する。
+
+  ```bazel
+  # Package "lib"
+  load("@rules_cc//cc:defs.bzl", "cc_library")
+
+  cc_library(
+      name = "hello-time",
+      srcs = ["hello-time.cpp"],
+      hdrs = ["hello-time.hpp"],
+      # Grants access to "//main" package (w/o subpackages)
+      visibility = ["//main:__pkg__"],
+  )
+  ```
+
 ## ビルド
 
 ```sh
@@ -33,7 +146,7 @@ INFO: 8 processes: 4 internal, 4 linux-sandbox.
 INFO: Build completed successfully, 8 total actions
 ```
 
-ライブラリのビルド
+stage2と同様に、ラベルを指定してライブラリをビルド可能。
 
 ```
 $ bazel build //lib:hello-time 
@@ -45,12 +158,6 @@ Target //lib:hello-time up-to-date:
 INFO: Elapsed time: 0.747s, Critical Path: 0.27s
 INFO: 6 processes: 3 internal, 3 linux-sandbox.
 INFO: Build completed successfully, 6 total actions
-
-$ file bazel-bin/lib/libhello-time.a
-bazel-bin/lib/libhello-time.a: current ar archive
-
-$ file bazel-bin/lib/libhello-time.so
-bazel-bin/lib/libhello-time.so: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=6b316cf0202a6894a36477b7fc94b47ddfd6819b, not stripped
 ```
 
 ## 実行
