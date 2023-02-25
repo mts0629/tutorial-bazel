@@ -163,6 +163,16 @@ Hello Goodbye
 Wed Feb 22 02:31:58 2023
 ```
 
+## クリーン
+
+`bazel clean` でビルド成果物がクリーンされる。
+
+```sh
+$ bazel clean
+Starting local Bazel server and connecting to it...
+INFO: Starting clean (this may take a while). Consider using --async if the clean takes more than several minutes
+```
+
 ## Dependency graph
 
 ターゲットの依存関係グラフをDOT言語で出力し、可視化が可能。
