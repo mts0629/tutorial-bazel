@@ -1,0 +1,10 @@
+digraph mygraph {
+  node [shape=box];
+  "//main:hello-world"
+  "//main:hello-world" -> "//main:hello-world.cpp"
+  "//main:hello-world" -> "//main:hello-greet"
+  "//main:hello-greet"
+  "//main:hello-greet" -> "//main:hello-greet.hpp\n//main:hello-greet.cpp"
+  "//main:hello-world.cpp"
+  "//main:hello-greet.hpp\n//main:hello-greet.cpp"
+}

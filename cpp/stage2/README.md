@@ -1,6 +1,6 @@
 # Stage2
 
-複数ターゲット、単一パッケージ
+複数ターゲット
 
 ```
 cpp
@@ -12,6 +12,102 @@ cpp
     |   └─ hello-greet.hpp
     └─ WORKSPACE
 ```
+
+![hello-world.png](hello-world.png)
+
+## パッケージ
+
+### main
+
+プログラムはstage1と同一。
+
+- hello-world.cpp
+
+  ```cpp
+  #include <ctime>
+  #include <string>
+  #include <iostream>
+
+  #include "hello-greet.hpp"
+
+  void print_localtime() {
+      std::time_t result = std::time(nullptr);
+
+      std::cout << std::asctime(std::localtime(&result));
+  }
+
+  int main(int argc, char** argv) {
+      std::string who = "world";
+      if (argc > 1) {
+          who = argv[1];
+      }
+
+      std::cout << get_greet(who) << std::endl;
+
+      print_localtime();
+
+      return 0;
+  }
+  ```
+
+- hello-greet.hpp
+
+  ```cpp
+  #ifndef MAIN_HELLO_GREET_H
+  #define MAIN_HELLO_GREET_H
+
+  #include <string>
+
+  std::string get_greet(const std::string &who);
+
+  #endif // MAIN_HELLO_GREET_H
+  ```
+
+- hello-greet.cpp
+
+  ```cpp
+  #include "hello-greet.hpp"
+
+  #include <string>
+
+  std::string get_greet(const std::string &who) {
+      return "Hello " + who;
+  }
+  ```
+
+- BUILD
+
+  - `cc_library` はライブラリ生成のためのルール。
+    - `hdrs` には、ライブラリがインタフェースとして外部に公開するヘッダファイルを記述する。非公開のものは`src` 側に記述する。
+  - 上記ライブラリをリンクする`cc_binary`ルールの依存関係として、 `deps` に対象のターゲットを記述する。
+    - 同一のパッケージ内であれば、パッケージ名は省略できる。
+    - 直接依存関係のみを指定する。
+
+  ```bazel
+  load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+  # Library rule
+  cc_library(
+      # Target name, "hello-greet"
+      name = "hello-greet",
+      # Source list
+      srcs = ["hello-greet.cpp"],
+      # Header list
+      hdrs = ["hello-greet.hpp"],
+  )
+
+  cc_binary(
+      name = "hello-world",
+      srcs = ["hello-world.cpp"],
+      # Dependency list
+      deps = [
+          # Dependent target (library)
+          "//main:hello-greet",
+          # Can be specified with relative path:
+          # ":hello-greet"
+      ],
+  )
+  ```
 
 ## ビルド
 
@@ -29,7 +125,9 @@ INFO: 7 processes: 4 internal, 3 linux-sandbox.
 INFO: Build completed successfully, 7 total actions
 ```
 
-ライブラリのビルド
+ターゲットを指定して、ライブラリ単体でのビルドが可能。
+ビルド成果物は`bazel-bin` 以下に生成される。
+- デフォルトでは静的ライブラリ、共有ライブラリの両者がビルドされる。
 
 ```
 $ bazel build //main:hello-greet
@@ -50,20 +148,6 @@ $ file ./bazel-bin/main/libhello-greet.so
 ```
 
 ## 実行
-
-```sh
-$ bazel run //main:hello-world
-INFO: Analyzed target //main:hello-world (1 packages loaded, 5 targets configured).
-INFO: Found 1 target...
-Target //main:hello-world up-to-date:
-  bazel-bin/main/hello-world
-INFO: Elapsed time: 0.189s, Critical Path: 0.01s
-INFO: 1 process: 1 internal.
-INFO: Build completed successfully, 1 total action
-INFO: Running command line: bazel-bin/main/hello-world
-Hello world
-Thu Feb 23 02:46:40 2023
-```
 
 ```sh
 $ ./bazel-bin/main/hello-world
