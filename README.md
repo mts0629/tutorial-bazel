@@ -1,10 +1,10 @@
-# bazel-tutorial
+# tutorial-bazel
 
-ビルドツール [Bazel](https://github.com/bazelbuild/bazel) の入門
+ビルドツールBazelの学習
 
 ## インストール
 
-Ubuntu環境へのAPTによるインストール
+APTによるインストール
 
 - [Install](https://bazel.build/install)
 - [Installing Bazel on Ubuntu](https://bazel.build/install/ubuntu)
@@ -20,6 +20,21 @@ $ sudo apt update && sudo apt install bazel
 # Upgrade bazel
 # $ sudo apt update && sudo apt full-upgrade
 ```
+
+## ソースコード・著作権
+
+本リポジトリに含まれるソースコードは、下記で公開されている内容を元に改変を加えたものです。
+
+未改変部の著作権は、原著作者様に帰属します。
+
+- [Bazel](https://github.com/bazelbuild/bazel)
+- [Bazel Tutorial: Build a C++ Project](https://bazel.build/start/cpp)
+
+### 改変点
+
+- コーディングスタイルの調整
+- コメントの追加
+- プロジェクト・ファイル構成
 
 ## 基本
 
@@ -48,7 +63,3 @@ $ sudo apt update && sudo apt install bazel
     Labelによって識別される。
 
     - Labelは、`//` をWorkspaceルートとして `//path/to/package:target` の形式で記述される。
-
-## チュートリアル (C++)
-
-[Bazel Tutorial: Build a C++ Project](https://bazel.build/start/cpp)
